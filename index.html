@@ -69,11 +69,12 @@
             <h2 class="display-6 mb-4">Will you be my Valentine? <span class="heart">♥</span></h2>
             <img src="catto.jpg" alt="Cute cat" class="cat-image img-fluid">
             <div class="buttons d-flex flex-column flex-md-row justify-content-center gap-3">
-                <button class="btn btn-success btn-lg btn-valentine px-4 py-2" id="yesBtn">Yes, of course!</button>
-                <button class="btn btn-danger btn-lg btn-valentine px-4 py-2" id="noBtn">Dele lang sa</button>
+                <button class="btn btn-success btn-lg btn-valentine px-4 py-2" id="yesBtn">Yeeeess!</button>
+                <button class="btn btn-danger btn-lg btn-valentine px-4 py-2" id="noBtn">Dele lang</button>
             </div>
             <div class="message" id="yesMessage">
-                <p class="h4">Purrfect! 😻 You've made this kitty the happiest in the world! ♥</p>
+                <p class="h4">Yayyy! You've made this catto the happiest in the world! I love you my valentine! ^-^</p>
+                <p>*happy cat noise*</p>
             </div>
             <div class="message" id="noMessage">
                 <p class="h4">Are you sure? Look at those eyes again... 🥺</p>
@@ -86,28 +87,39 @@
         $(document).ready(function() {
             let noButtonClicks = 0;
             const catImages = ['cat2.jpg', 'cat7.jpg', 'cat4.jpg', 'cat8.jpg', 'cat1.jpg', 'cat6.jpg', 'cat5.jpg', 'cat3.jpg'];
+            const messages = [
+                "🥺",
+                "Sure ka na ba dyan?",
+                "Luhh🥺",
+                "Ayusin mo desisyon mo sa buhay!",
+                "aaaAAAAA!",
+                "Di mo nako mahal? 🥺",
+                "T-T",
+                "Sure na yan? Look at these eyes again... 🥺"
+            ];
             
             $("#yesBtn").click(function() {
                 $(".buttons").fadeOut();
                 $("#yesMessage").fadeIn();
                 $("#noBtn, #noMessage, #yesBtn").remove();
-                $(".cat-image").css("border-color", "#4CAF50");
+                $(".cat-image").attr('src', 'cat9.gif').css("border-color", "#4CAF50");
                 confetti();
             });
 
-            $("#noBtn").mouseenter(function() {
+            $("#noBtn").click(function() {
                 const currentImage = catImages[noButtonClicks % catImages.length];
                 $(".cat-image").attr('src', currentImage);
+                
+                // Show message immediately when button is clicked
+                $("#noMessage").html(`<p class="h4">${messages[noButtonClicks % messages.length]}</p>`).fadeIn();
 
-                if (noButtonClicks < 999) {
+                if (noButtonClicks < 7) {
                     $(this).css({
                         position: 'absolute',
                         left: Math.random() * ($(window).width() - 100) + 'px',
                         top: Math.random() * ($(window).height() - 100) + 'px'
                     });
                     noButtonClicks++;
-                } else {
-                    $("#noMessage").fadeIn();
                 }
             });
         });
@@ -115,7 +127,7 @@
         // Simple confetti effect with flowers and hearts
         function confetti() {
             const symbols = ['🌸', '♥'];
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 200; i++) {
                 const confetti = $('<div></div>');
                 confetti.text(symbols[Math.floor(Math.random() * symbols.length)]);
                 confetti.css({
@@ -132,7 +144,7 @@
                 confetti.animate({
                     top: '100vh',
                     opacity: 0
-                }, 2000 + Math.random() * 1000, function() {
+                }, 3000 + Math.random() * 2000, function() {
                     $(this).remove();
                 });
             }
