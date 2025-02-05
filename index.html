@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitty Valentine</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .valentine-card {
+            margin: 20px auto;
+            padding: 2rem;
+            background-color: #ffe6e6;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .cat-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin: 20px auto;
+            object-fit: cover;
+            border: 3px solid #ff6b6b;
+        }
+
+        .heart {
+            color: #ff6b6b;
+            font-size: 24px;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .btn-valentine {
+            margin: 10px;
+            transition: transform 0.3s;
+        }
+
+        .btn-valentine:hover {
+            transform: scale(1.1);
+        }
+
+        .message {
+            font-size: 24px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .cat-image {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .valentine-card {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container min-vh-100 d-flex align-items-center justify-content-center">
+        <div class="valentine-card col-12 col-md-8 col-lg-6 col-xl-4">
+            <h2 class="display-6 mb-4">Will you be my Valentine? <span class="heart">♥</span></h2>
+            <img src="catto.jpg" alt="Cute cat" class="cat-image img-fluid">
+            <div class="buttons d-flex flex-column flex-md-row justify-content-center gap-3">
+                <button class="btn btn-success btn-lg btn-valentine px-4 py-2" id="yesBtn">Yes, of course!</button>
+                <button class="btn btn-danger btn-lg btn-valentine px-4 py-2" id="noBtn">Dele lang sa</button>
+            </div>
+            <div class="message" id="yesMessage">
+                <p class="h4">Purrfect! 😻 You've made this kitty the happiest in the world! ♥</p>
+            </div>
+            <div class="message" id="noMessage">
+                <p class="h4">Are you sure? Look at those eyes again... 🥺</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            let noButtonClicks = 0;
+            const catImages = ['cat2.jpg', 'cat7.jpg', 'cat4.jpg', 'cat8.jpg', 'cat1.jpg', 'cat6.jpg', 'cat5.jpg', 'cat3.jpg'];
+            
+            $("#yesBtn").click(function() {
+                $(".buttons").fadeOut();
+                $("#yesMessage").fadeIn();
+                $("#noBtn, #noMessage, #yesBtn").remove();
+                $(".cat-image").css("border-color", "#4CAF50");
+                confetti();
+            });
+
+            $("#noBtn").mouseenter(function() {
+                const currentImage = catImages[noButtonClicks % catImages.length];
+                $(".cat-image").attr('src', currentImage);
+
+                if (noButtonClicks < 999) {
+                    $(this).css({
+                        position: 'absolute',
+                        left: Math.random() * ($(window).width() - 100) + 'px',
+                        top: Math.random() * ($(window).height() - 100) + 'px'
+                    });
+                    noButtonClicks++;
+                } else {
+                    $("#noMessage").fadeIn();
+                }
+            });
+        });
+
+        // Simple confetti effect with flowers and hearts
+        function confetti() {
+            const symbols = ['🌸', '♥'];
+            for (let i = 0; i < 50; i++) {
+                const confetti = $('<div></div>');
+                confetti.text(symbols[Math.floor(Math.random() * symbols.length)]);
+                confetti.css({
+                    position: 'fixed',
+                    left: Math.random() * 100 + 'vw',
+                    top: -20,
+                    fontSize: '20px',
+                    color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                    pointerEvents: 'none'
+                });
+                
+                $('body').append(confetti);
+                
+                confetti.animate({
+                    top: '100vh',
+                    opacity: 0
+                }, 2000 + Math.random() * 1000, function() {
+                    $(this).remove();
+                });
+            }
+        }
+    </script>
+</body>
+</html> 
