@@ -2,153 +2,194 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wag Mong Buksan!</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Classical Ciphers</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        .valentine-card {
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
             margin: 20px auto;
-            padding: 2rem;
-            background-color: #ffe6e6;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            text-align: center;
+            padding: 20px;
         }
-
-        .cat-image {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            margin: 20px auto;
-            object-fit: cover;
-            border: 3px solid #ff6b6b;
+        .cipher-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
-
-        .heart {
-            color: #ff6b6b;
-            font-size: 24px;
-            animation: pulse 1s infinite;
+        textarea {
+            width: 100%;
+            margin: 10px 0;
         }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-
-        .btn-valentine {
-            margin: 10px;
-            transition: transform 0.3s;
-        }
-
-        .btn-valentine:hover {
-            transform: scale(1.1);
-        }
-
-        .message {
-            font-size: 24px;
-            margin-top: 20px;
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            .cat-image {
-                width: 150px;
-                height: 150px;
-            }
-            
-            .valentine-card {
-                padding: 1rem;
-            }
-        }
+        
     </style>
 </head>
 <body>
-    <div class="container min-vh-100 d-flex align-items-center justify-content-center">
-        <div class="valentine-card col-12 col-md-8 col-lg-6 col-xl-4">
-            <h2 class="display-6 mb-4">Will you be my Valentine? <span class="heart">♥</span></h2>
-            <img src="catto.jpg" alt="Cute cat" class="cat-image img-fluid">
-            <div class="buttons d-flex flex-column flex-md-row justify-content-center gap-3">
-                <button class="btn btn-success btn-lg btn-valentine px-4 py-2" id="yesBtn">Yeeeess!</button>
-                <button class="btn btn-danger btn-lg btn-valentine px-4 py-2" id="noBtn">Dele lang</button>
-            </div>
-            <div class="message" id="yesMessage">
-                <p class="h4">Yayyy! You've made this catto the happiest in the world! I love you my valentine! ^-^</p>
-                <p>*happy cat noise*</p>
-            </div>
-            <div class="message" id="noMessage">
-                <p class="h4">Are you sure? Look at those eyes again... 🥺</p>
-            </div>
-        </div>
+    <h1>Classical Ciphers</h1>
+
+    <div class="cipher-section">
+        <h2>Caesar Cipher</h2>
+        <input type="number" id="caesarShift" value="3" min="1" max="25">
+        <textarea id="caesarInput" rows="4" placeholder="Enter text to encrypt/decrypt"></textarea>
+        <button onclick="caesarEncrypt()">Encrypt</button>
+        <button onclick="caesarDecrypt()">Decrypt</button>
+        <textarea id="caesarOutput" rows="4" readonly></textarea>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <div class="cipher-section">
+        <h2>Monoalphabetic Cipher</h2>
+        <input type="text" id="monoKey" placeholder="Enter substitution key (26 unique letters)">
+        <button onclick="generateMonoKey()">Generate Random Key</button>
+        <textarea id="monoInput" rows="4" placeholder="Enter text to encrypt/decrypt"></textarea>
+        <button onclick="monoEncrypt()">Encrypt</button>
+        <button onclick="monoDecrypt()">Decrypt</button>
+        <textarea id="monoOutput" rows="4" readonly></textarea>
+    </div>
+
+    <div class="cipher-section">
+        <h2>Playfair Cipher</h2>
+        <input type="text" id="playfairKey" placeholder="Enter keyword">
+        <div id="playfairGrid" style="margin: 10px 0; font-family: monospace;"></div>
+        <textarea id="playfairInput" rows="4" placeholder="Enter text to encrypt/decrypt"></textarea>
+        <button onclick="playfairEncrypt()">Encrypt</button>
+        <button onclick="playfairDecrypt()">Decrypt</button>
+        <textarea id="playfairOutput" rows="4" readonly></textarea>
+    </div>
+
     <script>
-        $(document).ready(function() {
-            let noButtonClicks = 0;
-            const catImages = ['cat2.jpg', 'cat7.jpg', 'cat4.jpg', 'cat8.jpg', 'cat1.jpg', 'cat6.jpg', 'cat5.jpg', 'cat3.jpg'];
-            const messages = [
-                "🥺",
-                "Sure ka na ba dyan?",
-                "Luhh🥺",
-                "Ayusin mo desisyon mo sa buhay!",
-                "aaaAAAAA!",
-                "Di mo nako mahal? 🥺",
-                "T-T",
-                "Sure na yan? Look at these eyes again... 🥺"
-            ];
-            
-            $("#yesBtn").click(function() {
-                $(".buttons").fadeOut();
-                $("#yesMessage").fadeIn();
-                $("#noBtn, #noMessage, #yesBtn").remove();
-                $(".cat-image").attr('src', 'cat9.gif').css("border-color", "#4CAF50");
-                confetti();
-            });
-
-            $("#noBtn").click(function() {
-                const currentImage = catImages[noButtonClicks % catImages.length];
-                $(".cat-image").attr('src', currentImage);
-                
-                // Show message immediately when button is clicked
-                $("#noMessage").html(`<p class="h4">${messages[noButtonClicks % messages.length]}</p>`).fadeIn();
-
-                if (noButtonClicks < 7) {
-                    $(this).css({
-                        position: 'absolute',
-                        left: Math.random() * ($(window).width() - 100) + 'px',
-                        top: Math.random() * ($(window).height() - 100) + 'px'
-                    });
-                    noButtonClicks++;
-                }
-            });
-        });
-
-        // Simple confetti effect with flowers and hearts
-        function confetti() {
-            const symbols = ['🌸', '♥'];
-            for (let i = 0; i < 50; i++) {
-                const confetti = $('<div></div>');
-                confetti.text(symbols[Math.floor(Math.random() * symbols.length)]);
-                confetti.css({
-                    position: 'fixed',
-                    left: Math.random() * 100 + 'vw',
-                    top: -20,
-                    fontSize: '20px',
-                    color: `hsl(${Math.random() * 360}, 100%, 50%)`,
-                    pointerEvents: 'none'
-                });
-                
-                $('body').append(confetti);
-                
-                confetti.animate({
-                    top: '100vh',
-                    opacity: 0
-                }, 3000 + Math.random() * 2000, function() {
-                    $(this).remove();
-                });
-            }
+        // Caesar Cipher
+        function caesarCipher(text, shift, encrypt = true) {
+            return text.split('').map(char => {
+                if (!/[a-zA-Z]/.test(char)) return char;
+                const code = char.charCodeAt(0);
+                const base = code >= 97 ? 97 : 65;
+                const shift_amount = encrypt ? shift : (26 - shift);
+                return String.fromCharCode(((code - base + shift_amount) % 26) + base);
+            }).join('');
         }
+
+        function caesarEncrypt() {
+            const text = $('#caesarInput').val();
+            const shift = parseInt($('#caesarShift').val());
+            $('#caesarOutput').val(caesarCipher(text, shift));
+        }
+
+        function caesarDecrypt() {
+            const text = $('#caesarInput').val();
+            const shift = parseInt($('#caesarShift').val());
+            $('#caesarOutput').val(caesarCipher(text, shift, false));
+        }
+
+        // Monoalphabetic Cipher
+        function generateMonoKey() {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+            // Fisher-Yates shuffle
+            for (let i = alphabet.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [alphabet[i], alphabet[j]] = [alphabet[j], alphabet[i]];
+            }
+            $('#monoKey').val(alphabet.join(''));
+        }
+
+        function createMonoKey(key) {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            return key.toUpperCase().padEnd(26, alphabet);
+        }
+
+        function monoCipher(text, key, encrypt = true) {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const substitution = createMonoKey(key);
+            return text.split('').map(char => {
+                if (!/[a-zA-Z]/.test(char)) return char;
+                const isUpper = char === char.toUpperCase();
+                const idx = alphabet.indexOf(char.toUpperCase());
+                const result = encrypt ? substitution[idx] : alphabet[substitution.indexOf(char.toUpperCase())];
+                return isUpper ? result : result.toLowerCase();
+            }).join('');
+        }
+
+        function monoEncrypt() {
+            const text = $('#monoInput').val();
+            const key = $('#monoKey').val();
+            $('#monoOutput').val(monoCipher(text, key));
+        }
+
+        function monoDecrypt() {
+            const text = $('#monoInput').val();
+            const key = $('#monoKey').val();
+            $('#monoOutput').val(monoCipher(text, key, false));
+        }
+
+        // Playfair Cipher
+        function displayPlayfairMatrix(matrix) {
+            const gridHtml = matrix.map(row => 
+                `<div>${row.join(' | ')}</div>`
+            ).join('\n');
+            $('#playfairGrid').html(gridHtml);
+        }
+
+        function createPlayfairMatrix(keyword) {
+            const alphabet = 'ABCDEFGHIKLMNOPQRSTUVWXYZ';
+            const key = keyword.toUpperCase().replace(/J/g, 'I');
+            const matrix = [...new Set(key + alphabet)].slice(0, 25);
+            const result = Array(5).fill().map((_, i) => matrix.slice(i * 5, (i + 1) * 5));
+            displayPlayfairMatrix(result);
+            return result;
+        }
+
+        function findPosition(matrix, char) {
+            for (let i = 0; i < 5; i++) {
+                for (let j = 0; j < 5; j++) {
+                    if (matrix[i][j] === char) return [i, j];
+                }
+            }
+            return null;
+        }
+
+        function playfairCipher(text, keyword, encrypt = true) {
+            const matrix = createPlayfairMatrix(keyword);
+            text = text.toUpperCase().replace(/J/g, 'I').replace(/[^A-Z]/g, '');
+            if (text.length % 2) text += 'X';
+
+            return text.match(/.{2}/g).map(pair => {
+                let [a, b] = pair.split('');
+                let [row1, col1] = findPosition(matrix, a);
+                let [row2, col2] = findPosition(matrix, b);
+
+                if (row1 === row2) {
+                    col1 = (col1 + (encrypt ? 1 : 4)) % 5;
+                    col2 = (col2 + (encrypt ? 1 : 4)) % 5;
+                } else if (col1 === col2) {
+                    row1 = (row1 + (encrypt ? 1 : 4)) % 5;
+                    row2 = (row2 + (encrypt ? 1 : 4)) % 5;
+                } else {
+                    [col1, col2] = [col2, col1];
+                }
+
+                return matrix[row1][col1] + matrix[row2][col2];
+            }).join('');
+        }
+
+        function playfairEncrypt() {
+            const text = $('#playfairInput').val();
+            const key = $('#playfairKey').val();
+            $('#playfairOutput').val(playfairCipher(text, key));
+        }
+
+        function playfairDecrypt() {
+            const text = $('#playfairInput').val();
+            const key = $('#playfairKey').val();
+            $('#playfairOutput').val(playfairCipher(text, key, false));
+        }
+
+        // Add event listener for keyword input
+        $(document).ready(function() {
+            $('#playfairKey').on('input', function() {
+                createPlayfairMatrix($(this).val());
+            });
+            // Initialize with empty keyword
+            createPlayfairMatrix('');
+        });
     </script>
 </body>
-</html> 
+</html>
